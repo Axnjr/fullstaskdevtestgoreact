@@ -17,36 +17,29 @@ import (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
-	// Load configuration
 	cfg := config.LoadConfig()
 
-	// Initialize services
 	authService := services.NewAuthService()
 	orderService := services.NewOrderService()
 	priceSimulator := services.NewPriceSimulator()
 
-	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(authService, cfg)
 	priceHandler := handlers.NewPriceHandler(priceSimulator)
 	orderHandler := handlers.NewOrderHandler(orderService, priceSimulator)
 	wsHandler := handlers.NewWebSocketHandler(priceSimulator)
 
-	// Start price simulator
 	go priceSimulator.Start()
 
-	// Setup router
 	r := gin.Default()
 
-	// CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000", "https://fullstaskdevtestgoreact.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
-	// Public routes
 	r.POST("/login", authHandler.Login)
 	r.GET("/prices", priceHandler.GetPrices)
 	r.GET("/ws", wsHandler.HandleWebSocket)

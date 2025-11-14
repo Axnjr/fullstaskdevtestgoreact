@@ -8,7 +8,6 @@ import (
 	"trading-dashboard/models"
 )
 
-// PriceSimulator manages stock prices and broadcasts updates
 type PriceSimulator struct {
 	stocks     map[string]*models.Stock
 	stocksLock sync.RWMutex
@@ -16,7 +15,6 @@ type PriceSimulator struct {
 	clientsLock sync.RWMutex
 }
 
-// NewPriceSimulator creates a new price simulator
 func NewPriceSimulator() *PriceSimulator {
 	// Initialize with mock stocks
 	stocks := map[string]*models.Stock{
@@ -45,7 +43,6 @@ func (ps *PriceSimulator) GetStocks() []models.Stock {
 	return stocks
 }
 
-// GetStock returns a specific stock by symbol
 func (ps *PriceSimulator) GetStock(symbol string) (*models.Stock, bool) {
 	ps.stocksLock.RLock()
 	defer ps.stocksLock.RUnlock()
@@ -57,7 +54,6 @@ func (ps *PriceSimulator) GetStock(symbol string) (*models.Stock, bool) {
 	return stock, true
 }
 
-// Subscribe adds a channel to receive price updates
 func (ps *PriceSimulator) Subscribe(ch chan models.PriceUpdate) {
 	ps.clientsLock.Lock()
 	defer ps.clientsLock.Unlock()

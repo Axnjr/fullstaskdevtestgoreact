@@ -17,19 +17,16 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// WebSocketHandler handles WebSocket connections
 type WebSocketHandler struct {
 	priceSimulator *services.PriceSimulator
 }
 
-// NewWebSocketHandler creates a new WebSocket handler
 func NewWebSocketHandler(priceSimulator *services.PriceSimulator) *WebSocketHandler {
 	return &WebSocketHandler{
 		priceSimulator: priceSimulator,
 	}
 }
 
-// HandleWebSocket handles WebSocket connections at /ws
 func (h *WebSocketHandler) HandleWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -67,8 +64,7 @@ func (h *WebSocketHandler) HandleWebSocket(c *gin.Context) {
 			}
 		}
 	}()
-
-	// Keep connection alive and handle incoming messages
+	
 	for {
 		_, _, err := conn.ReadMessage()
 		if err != nil {

@@ -11,14 +11,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// Claims represents JWT claims
 type Claims struct {
 	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
-// AuthMiddleware validates JWT tokens
 func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -28,7 +26,7 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Extract token from "Bearer <token>"
+		// extract token from "Bearer <token>"
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization header format"})
@@ -38,7 +36,6 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		// Parse and validate token
 		claims := &Claims{}
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return []byte(cfg.JWTSecret), nil
@@ -50,7 +47,6 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Set user info in context
 		c.Set("user_id", claims.UserID)
 		c.Set("username", claims.Username)
 
@@ -58,7 +54,6 @@ func AuthMiddleware(cfg *config.Config) gin.HandlerFunc {
 	}
 }
 
-// GenerateToken generates a JWT token for a user
 func GenerateToken(userID, username string, cfg *config.Config) (string, error) {
 	now := time.Now()
 	claims := &Claims{

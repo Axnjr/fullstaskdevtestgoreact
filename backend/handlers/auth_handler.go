@@ -11,13 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AuthHandler handles authentication requests
 type AuthHandler struct {
 	authService *services.AuthService
 	config      *config.Config
 }
 
-// NewAuthHandler creates a new auth handler
 func NewAuthHandler(authService *services.AuthService, cfg *config.Config) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
@@ -25,7 +23,6 @@ func NewAuthHandler(authService *services.AuthService, cfg *config.Config) *Auth
 	}
 }
 
-// Login handles POST /login
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req models.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
