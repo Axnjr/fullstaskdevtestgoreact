@@ -4,7 +4,7 @@ import OrderForm from './components/OrderForm'
 import OrdersList from './components/OrdersList'
 import Login from './components/Login'
 
-const API_BASE = 'http://localhost:8080'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 function App() {
   const [prices, setPrices] = useState({})
@@ -41,8 +41,9 @@ function App() {
       return
     }
 
-    const websocket = new WebSocket('ws://localhost:8080/ws')
-    
+    const wsUrl = API_BASE.replace('https://', 'wss://').replace('http://', 'ws://')
+    const websocket = new WebSocket(`${wsUrl}/ws`)
+
     websocket.onopen = () => {
       console.log('WebSocket connected')
     }
@@ -122,7 +123,7 @@ function App() {
       setOrders([])
       return
     }
-    
+
     try {
       const response = await fetch(`${API_BASE}/orders`, {
         headers: {
@@ -220,12 +221,12 @@ function App() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-5 max-w-7xl mx-auto">
         <div className="flex flex-col gap-5">
           <StockPrices prices={prices} />
-          <OrderForm 
-            prices={prices} 
+          <OrderForm
+            prices={prices}
             onSubmit={handleOrderSubmit}
           />
         </div>
-        
+
         <div className="flex flex-col">
           <OrdersList orders={orders} />
         </div>

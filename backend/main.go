@@ -39,7 +39,7 @@ func main() {
 
 	// CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000", "https://*.vercel.app"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -59,8 +59,9 @@ func main() {
 		protected.GET("/orders", orderHandler.GetOrders)
 	}
 
-	log.Printf("Server starting on :%s", cfg.Port)
-	if err := r.Run(":" + cfg.Port); err != nil {
+	addr := "0.0.0.0:" + cfg.Port
+	log.Printf("Server starting on %s", addr)
+	if err := r.Run(addr); err != nil {
 		log.Fatal(err)
 	}
 }
